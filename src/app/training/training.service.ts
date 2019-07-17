@@ -54,5 +54,9 @@ export class TrainingService {
         return {...this.runningExercise};
     }
 
+    getExercises () {
+        return this.exercises.slice();
+    }
+
 
 }
