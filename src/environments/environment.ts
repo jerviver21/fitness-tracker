@@ -3,8 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebase: {
+    apiKey: "AIzaSyDNx2C1xzeurUX88MIb8YWBTqfeiggbbw0",
+    authDomain: "ng-fitness-tracker-b451b.firebaseapp.com",
+    databaseURL: "https://ng-fitness-tracker-b451b.firebaseio.com",
+    projectId: "ng-fitness-tracker-b451b",
+    storageBucket: "ng-fitness-tracker-b451b.appspot.com",
+    messagingSenderId: "753115564463",
+    appId: "1:753115564463:web:f4a81d1fdd7f325b"
+  }
 };
+
 
 /*
  * In development mode, for easier debugging, you can ignore zone related error

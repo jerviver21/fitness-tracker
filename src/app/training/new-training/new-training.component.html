@@ -7,7 +7,7 @@
       <mat-form-field>
         <mat-label>Select the type of training!</mat-label>
         <mat-select placeholder="Choose your training" ngModel name="exercise" required> 
-          <mat-option [value]="e.id" *ngFor="let e of availableExercises">
+          <mat-option [value]="e.name" *ngFor="let e of availableExercises">
            {{e.name}}
           </mat-option>
         </mat-select>
