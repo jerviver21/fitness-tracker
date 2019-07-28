@@ -8,15 +8,18 @@ import { map } from "rxjs/operators";
     providedIn:'root'
 })
 export class TrainingService {
-    private availableExercises: Exercise[] = [];
-
-    private runningExercise:Exercise;
-
+    
     public exerciseChanged = new Subject<Exercise>();
 
     public exercisesChanged = new Subject<Exercise[]>();
 
-    private exercises: Exercise[] = [];
+    public myExercisesChanged = new Subject<Exercise[]>();
+
+    private availableExercises: Exercise[] = [];
+
+    private runningExercise:Exercise;
+
+    private myExercises: Exercise[] = [];
 
     constructor(private db: AngularFirestore) {
         
@@ -30,9 +33,10 @@ export class TrainingService {
         .pipe(
             map( docArray => {
                 return docArray.map(doc => {
+                    const data:Exercise = <Exercise>doc.payload.doc.data();
                     return {
                         id: doc.payload.doc.id,
-                        ...doc.payload.doc.data(),
+                        ...data,
                     };
                 });
             })
@@ -48,7 +52,7 @@ export class TrainingService {
     }
 
     completeExercise() {
-        this.exercises.push({
+        this.addExercicesToDatabase({
             ...this.runningExercise, 
             date: new Date(),
             state: 'completed',
@@ -58,10 +62,10 @@ export class TrainingService {
     }
 
     cancelExercise(progress: number) {
-        this.exercises.push({
+        this.addExercicesToDatabase({
             ...this.runningExercise, 
             duration: this.runningExercise.duration * (progress / 100),
-            calories: this.runningExercise.duration * (progress / 100),
+            calories: this.runningExercise.calories * (progress / 100),
             date: new Date(),
             state: 'canceled',
         });
@@ -73,8 +77,17 @@ export class TrainingService {
         return {...this.runningExercise};
     }
 
-    getExercises () {
-        return this.exercises.slice();
+    fetchMyExercises () {
+        this.db.collection('myExercises')
+        .valueChanges()//No necesito id, no necesito snapshot
+        .subscribe((exercises:Exercise[]) => {
+            this.myExercises = exercises;
+            this.myExercisesChanged.next([...this.myExercises]);
+        });
+    }
+
+    addExercicesToDatabase(exercise: Exercise) {
+        this.db.collection('myExercises').add(exercise);
     }
 
 
