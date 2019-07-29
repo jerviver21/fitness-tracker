@@ -1,6 +1,6 @@
 import { Exercise } from "./exercise.model";
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { AngularFirestore } from "angularfire2/firestore";
 import { map } from "rxjs/operators";
 
@@ -21,6 +21,8 @@ export class TrainingService {
 
     private myExercises: Exercise[] = [];
 
+    private subscriptions: Subscription[] = [];
+
     constructor(private db: AngularFirestore) {
         
     }
@@ -28,7 +30,7 @@ export class TrainingService {
     fetchAvailableExercises() {
         //Firebase maneja esta subscripcion por nosostros, asi que si vuelve a 
         //crear este componente, no se crea una nueva subscripcion
-        this.db.collection('availableExercises')
+        this.subscriptions.push(this.db.collection('availableExercises')
         .snapshotChanges()
         .pipe(
             map( docArray => {
@@ -43,7 +45,7 @@ export class TrainingService {
         ).subscribe(exercises => {
             this.availableExercises = exercises;
             this.exercisesChanged.next([...this.availableExercises]);
-        });
+        }));
     }
 
     startExercise(selectedId: string) {
@@ -78,12 +80,16 @@ export class TrainingService {
     }
 
     fetchMyExercises () {
-        this.db.collection('myExercises')
+        this.subscriptions.push(this.db.collection('myExercises')
         .valueChanges()//No necesito id, no necesito snapshot
         .subscribe((exercises:Exercise[]) => {
             this.myExercises = exercises;
             this.myExercisesChanged.next([...this.myExercises]);
-        });
+        }));
+    }
+
+    cancelSubscriptions() {
+        this.subscriptions.forEach( sub => sub.unsubscribe());
     }
 
     addExercicesToDatabase(exercise: Exercise) {
