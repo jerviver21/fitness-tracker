@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-signup',
@@ -10,8 +11,9 @@ import { AuthService } from '../auth.service';
 export class SignupComponent implements OnInit {
 
   maxDate:Date;
+  isLoading:boolean=false;
 
-  constructor(private authService:AuthService) { }
+  constructor(private authService:AuthService, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.maxDate = new Date();
@@ -19,11 +21,19 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(form:NgForm){
-    console.log(form);
+    this.isLoading=true;
     this.authService.registerUser({
       email : form.value.email,
       password : form.value.password
-    });
+    }).subscribe(result => {
+      this.isLoading=false;
+    },
+      error => {
+        this.isLoading=false;
+        this._snackBar.open(error.message, null, {
+          duration: 3000,
+        });
+      });;
   }
 
 }

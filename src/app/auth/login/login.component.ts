@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-login',
@@ -10,8 +11,9 @@ import { AuthService } from '../auth.service';
 export class LoginComponent implements OnInit {
 
   form:FormGroup;
+  isLoading:boolean=false;
 
-  constructor(private authService : AuthService) { }
+  constructor(private authService : AuthService, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -21,10 +23,18 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
-    console.log(this.form);
+    this.isLoading=true;
     this.authService.login({
       email : this.form.value.email,
       password : this.form.value.password
+    }).subscribe(result => {
+      this.isLoading=false;
+    },
+    error => {
+      this.isLoading=false;
+      this._snackBar.open(error.message, null, {
+        duration: 3000,
+      });
     });
   }
 

@@ -20,6 +20,7 @@
       <mat-hint>Please Enter your password</mat-hint>
       <mat-error>Password is required</mat-error>
     </mat-form-field>
-    <button type="submit" mat-raised-button color="primary" [disabled]="form.invalid">Submit</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="form.invalid" *ngIf="!isLoading">Submit</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>

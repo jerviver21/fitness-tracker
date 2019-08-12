@@ -1,6 +1,5 @@
-import { User } from './user.model';
 import { AuthData } from './auth-data.model';
-import { Subject } from 'rxjs';
+import { Subject, Observable, from } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -32,28 +31,18 @@ export class AuthService{
         });
     }
 
-    registerUser(authdata:AuthData){
-        this.afauth.auth.createUserWithEmailAndPassword(
+    registerUser(authdata:AuthData): Observable<any>{
+        return  from(this.afauth.auth.createUserWithEmailAndPassword(
             authdata.email,
             authdata.password
-        ).then(result => {
-            console.log(result);  
-        })
-        .catch(error => {
-            console.log(error);
-        });
+        ));
     }
 
-    login(authdata:AuthData){
-        this.afauth.auth.signInWithEmailAndPassword(
+    login(authdata:AuthData): Observable<any>{
+       return  from(this.afauth.auth.signInWithEmailAndPassword(
             authdata.email,
             authdata.password
-        ).then(result => {
-            console.log(result);
-        })
-        .catch(error => {
-            console.log(error);
-        });
+        ));
     }
 
     logout(){
